@@ -1,0 +1,40 @@
+[package]
+name = "tmuntaner-keyring"
+authors = ["Thomas Muntaner <thomas.muntaner@gmail.com>"]
+version = "0.1.0-alpha.1"
+edition = "2018"
+license = "MPL-2.0"
+description = "A keyring client for linux, mac, and windows"
+homepage = "https://github.com/tmuntaner/keyring-rs"
+repository = "https://github.com/tmuntaner/keyring-rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1"
+
+[target.'cfg(target_os = "windows")'.dependencies]
+widestring = "0.5"
+
+[target.'cfg(target_os = "windows")'.dependencies.windows]
+version = "0.22"
+features = [
+    "Win32_Foundation",
+    "Win32_Security_Credentials",
+    "Win32_System_SystemInformation",
+]
+
+[target.'cfg(target_os = "macos")'.dependencies]
+security-framework = "2.3"
+
+[target.'cfg(target_os = "linux")'.dependencies]
+serde = { version = "1.0", features = ["derive"] }
+serde_json = { version = "1.0" }
+zbus = "1.9"
+zvariant = "2.9"
+zvariant_derive = "2.9"
+openssl = "0.10"
+hkdf = "0.11"
+aes = "0.7"
+block-modes = "0.8"
+sha2 = "0.9"
