@@ -3,130 +3,10 @@ name: PR Checks
 on: [push, pull_request]
 
 jobs:
-  check-linux:
-    name: Checks for Linux
-    runs-on: ubuntu-latest
-    steps:
-      - run: sudo apt-get update -y && sudo apt-get install -y libudev-dev libdbus-1-dev
-
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  check-mac:
-    name: Checks for Mac
-    runs-on: macos-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          target: x86_64-apple-darwin
-
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  check-windows:
-    name: Checks for Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
-
-  test-linux:
-    name: Test Suite on Linux
-    runs-on: ubuntu-latest
-    steps:
-      - run: sudo apt-get update -y && sudo apt-get install -y libudev-dev libdbus-1-dev
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  test-mac:
-    name: Test Suite on Mac
-    runs-on: macos-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          target: x86_64-apple-darwin
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
-  test-windows:
-    name: Test Suite on Windows
-    runs-on: windows-latest
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v2
-
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: stable
-          override: true
-
-      - name: Run cargo test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-
   lints-linux:
     name: Lints on Linux
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get update -y && sudo apt-get install -y libudev-dev libdbus-1-dev
       - name: Checkout sources
         uses: actions/checkout@v2
 
@@ -204,3 +84,143 @@ jobs:
         with:
           command: clippy
           args: -- -D warnings
+
+  test-linux:
+    name: Test Suite on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gnome-keyring
+          echo $HOME
+          mkdir -p /home/runner/.cache/
+          mkdir -p /home/runner/.local/share/keyrings/
+          chmod 700 -R /home/runner/.local/
+
+      - run: DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-address --fork` && echo "DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >> $GITHUB_ENV
+      - run: echo 'the-super-secret' | gnome-keyring-daemon --unlock
+      - run: eval $(echo 'the-super-secret' | gnome-keyring-daemon --start -d --components secrets) && echo "GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL" >> $GITHUB_ENV
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  test-mac:
+    name: Test Suite on Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: x86_64-apple-darwin
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  test-windows:
+    name: Test Suite on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  example-linux:
+    name: Run example on Linux
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          sudo apt-get update -y
+          sudo apt-get install -y gnome-keyring
+          echo $HOME
+          mkdir -p /home/runner/.cache/
+          mkdir -p /home/runner/.local/share/keyrings/
+          chmod 700 -R /home/runner/.local/
+
+      - run: DBUS_SESSION_BUS_ADDRESS=`dbus-daemon --session --print-address --fork` && echo "DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >> $GITHUB_ENV
+      - run: echo 'the-super-secret' | gnome-keyring-daemon --unlock
+      - run: eval $(echo 'the-super-secret' | gnome-keyring-daemon --start -d --components secrets) && echo "GNOME_KEYRING_CONTROL=$GNOME_KEYRING_CONTROL" >> $GITHUB_ENV
+
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - run: |
+          cargo run --example example
+
+  example-mac:
+    name: Run example on Mac
+    runs-on: macos-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          target: x86_64-apple-darwin
+
+      - name: Run cargo example
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example example
+
+  example-windows:
+    name: Run example on Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Run cargo example
+        uses: actions-rs/cargo@v1
+        with:
+          command: run
+          args: --example example

@@ -14,7 +14,7 @@ pub struct Keyring<'a> {
 }
 
 impl<'a> Keyring<'a> {
-    pub fn new(username: &'a str, service: &'a str) -> Result<Self> {
+    pub fn new(username: &'a str, service: &'a str, _application: &'a str) -> Result<Self> {
         Ok(Keyring { username, service })
     }
 
