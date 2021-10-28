@@ -67,16 +67,13 @@ impl Collection<'_> {
     pub fn search(&self, attributes: HashMap<&str, &str>) -> Result<Vec<Secret>> {
         let item_paths = self.proxy.search_items(attributes)?;
 
-        let items: Result<Vec<Item>> = item_paths
+        item_paths
             .into_iter()
             .map(|item| {
                 let path = item.as_str().to_string();
                 Item::new(self.connection.clone(), self.session_path.clone(), path)
             })
-            .collect();
-
-        let secrets: Result<Vec<Secret>> = items?.into_iter().map(|item| item.secret()).collect();
-
-        secrets
+            .map(|item| item?.secret())
+            .collect()
     }
 }

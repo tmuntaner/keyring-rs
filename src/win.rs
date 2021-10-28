@@ -12,7 +12,7 @@ pub struct Keyring<'a> {
 }
 
 impl<'a> Keyring<'a> {
-    pub fn new(username: &'a str, service: &'a str) -> Result<Self> {
+    pub fn new(username: &'a str, service: &'a str, _application: &'a str) -> Result<Self> {
         let client: WincredClient = WincredClient::new(username, service)?;
         Ok(Self { client })
     }

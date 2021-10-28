@@ -12,16 +12,18 @@ use std::collections::HashMap;
 pub struct Keyring<'a> {
     username: &'a str,
     service: &'a str,
+    application: &'a str,
     session: Session<'a>,
 }
 
 impl<'a> Keyring<'a> {
-    pub fn new(username: &'a str, service: &'a str) -> Result<Self> {
+    pub fn new(username: &'a str, service: &'a str, application: &'a str) -> Result<Self> {
         let session = Session::new()?;
 
         Ok(Self {
             username,
             service,
+            application,
             session,
         })
     }
@@ -30,9 +32,9 @@ impl<'a> Keyring<'a> {
         let collection = self.default_collection()?;
 
         let mut attributes: HashMap<&str, &str> = HashMap::new();
-        attributes.insert("application", "rust-keyring");
+        attributes.insert("application", self.application);
         attributes.insert("service", self.service);
-        let label = format!("Password for {} on {}", self.username, self.service);
+        let label = format!("Password for {}: {}", self.service, self.username);
         collection.create_item(password, label, attributes)?;
 
         Ok(())
@@ -42,7 +44,7 @@ impl<'a> Keyring<'a> {
         let collection = self.default_collection()?;
 
         let mut attributes: HashMap<&str, &str> = HashMap::new();
-        attributes.insert("application", "rust-keyring");
+        attributes.insert("application", self.application);
         attributes.insert("service", self.service);
         let collection = collection.search(attributes.clone())?;
         if collection.is_empty() {

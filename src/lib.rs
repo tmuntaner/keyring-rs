@@ -30,13 +30,26 @@ mod win;
 #[cfg(target_os = "windows")]
 use win::Keyring;
 
+/// This Keyring Client interacts with the OS specific keyring to store a secret.
+///
+/// ## Keyring Backends:
+/// * Windows - [wincred](https://docs.microsoft.com/en-us/windows/win32/api/wincred/)
+/// * Linux - [Secret Service](https://specifications.freedesktop.org/secret-service/latest/)
+/// * Mac - [Security Framework](https://developer.apple.com/documentation/security)
 pub struct KeyringClient<'a> {
     client: Keyring<'a>,
 }
 
 impl<'a> KeyringClient<'a> {
-    pub fn new(username: &'a str, service: &'a str) -> Result<Self> {
-        let client = Keyring::new(username, service)?;
+    /// Returns a new keyring client
+    ///
+    /// # Arguments
+    ///
+    /// * `username` - The username to store secrets under
+    /// * `service` - A unique identifier within your application
+    /// * `application` - The name of your application
+    pub fn new(username: &'a str, service: &'a str, application: &'a str) -> Result<Self> {
+        let client = Keyring::new(username, service, application)?;
 
         Ok(KeyringClient { client })
     }
