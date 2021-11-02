@@ -1,7 +1,7 @@
 [package]
 name = "tmuntaner-keyring"
 authors = ["Thomas Muntaner <thomas.muntaner@gmail.com>"]
-version = "0.1.0-alpha.3"
+version = "0.1.0-alpha.4"
 edition = "2018"
 license = "MPL-2.0"
 description = "A keyring client for linux, mac, and windows"
