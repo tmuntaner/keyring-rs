@@ -18,7 +18,7 @@ anyhow = "1"
 widestring = "0.5"
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
-version = "^0.26"
+version = "^0.28"
 features = [
     "std",
     "Win32_Foundation",
@@ -33,8 +33,8 @@ security-framework = "2.3"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
 zbus = "1.9"
-zvariant = "2.9"
-zvariant_derive = "2.9"
+zvariant = "^2.9"
+zvariant_derive = "^2.9"
 openssl = "0.10"
 hkdf = "0.11"
 aes = "0.7"
