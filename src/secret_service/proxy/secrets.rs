@@ -26,31 +26,31 @@ type Aes = Cbc<Aes128, Pkcs7>;
     default_path = "/org/freedesktop/secrets"
 )]
 pub trait Secrets {
-    fn open_session(&self, algorithm: &str, input: Value) -> zbus::Result<OpenSessionResult>;
+    fn open_session(&self, algorithm: &str, input: Value<'_>) -> zbus::Result<OpenSessionResult>;
 
     fn create_collection(
         &self,
-        properties: HashMap<&str, Value>,
+        properties: HashMap<&str, Value<'_>>,
         alias: &str,
     ) -> zbus::Result<CreateCollectionResult>;
 
     fn search_items(&self, attributes: HashMap<&str, &str>) -> zbus::Result<SearchItemsResult>;
 
-    fn unlock(&self, objects: Vec<&ObjectPath>) -> zbus::Result<UnlockResult>;
+    fn unlock(&self, objects: Vec<&ObjectPath<'_>>) -> zbus::Result<UnlockResult>;
 
-    fn lock(&self, objects: Vec<&ObjectPath>) -> zbus::Result<LockResult>;
+    fn lock(&self, objects: Vec<&ObjectPath<'_>>) -> zbus::Result<LockResult>;
 
     fn get_secrets(
         &self,
-        objects: Vec<ObjectPath>,
+        objects: Vec<ObjectPath<'_>>,
     ) -> zbus::Result<HashMap<OwnedObjectPath, Secret>>;
 
     fn read_alias(&self, name: &str) -> zbus::Result<OwnedObjectPath>;
 
-    fn set_alias(&self, name: &str, collection: ObjectPath) -> zbus::Result<()>;
+    fn set_alias(&self, name: &str, collection: ObjectPath<'_>) -> zbus::Result<()>;
 
     #[dbus_proxy(property)]
-    fn collections(&self) -> zbus::fdo::Result<Vec<ObjectPath>>;
+    fn collections(&self) -> zbus::fdo::Result<Vec<ObjectPath<'_>>>;
 }
 
 #[derive(Deserialize, Serialize, Type)]

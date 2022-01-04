@@ -16,7 +16,7 @@ use zvariant_derive::Type;
 trait Item {
     fn delete(&self) -> zbus::Result<OwnedObjectPath>;
 
-    fn get_secret(&self, session: &ObjectPath) -> zbus::Result<Secret>;
+    fn get_secret(&self, session: &ObjectPath<'_>) -> zbus::Result<Secret>;
 
     fn set_secret(&self, secret: SecretInput) -> zbus::Result<()>;
 
