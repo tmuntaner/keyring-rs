@@ -4,19 +4,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-use crate::secret_service::proxy::secrets::{OpenSessionResult, SecretsProxy};
+use crate::secret_service::proxy::secrets::{OpenSessionResult, SecretsProxyBlocking};
 use anyhow::Result;
 use hkdf::Hkdf;
 use openssl::bn::BigNum;
 use sha2::Sha256;
 use std::borrow::Borrow;
-use zbus::Connection;
+use zbus::blocking::Connection;
 use zvariant::OwnedObjectPath;
 
 pub const SERVICE_NAME: &str = "org.freedesktop.secrets";
 
 pub struct Session<'a> {
-    secrets: SecretsProxy<'a>,
+    secrets: SecretsProxyBlocking<'a>,
     connection: Connection,
     session_path: OwnedObjectPath,
     aes_key: Vec<u8>,
@@ -32,8 +32,8 @@ impl Session<'_> {
         let key = dh.generate_key()?;
         let public_key = key.public_key();
 
-        let connection = zbus::Connection::new_session()?;
-        let secrets: SecretsProxy = SecretsProxy::new(&connection)?;
+        let connection = zbus::blocking::Connection::session()?;
+        let secrets: SecretsProxyBlocking = SecretsProxyBlocking::new(&connection)?;
         let session: OpenSessionResult =
             secrets.open_session(DH_ALGORITHM, public_key.to_vec().as_slice().into())?;
 
@@ -57,7 +57,7 @@ impl Session<'_> {
         })
     }
 
-    pub fn secrets_proxy(&self) -> &SecretsProxy {
+    pub fn secrets_proxy(&self) -> &SecretsProxyBlocking {
         &self.secrets
     }
 

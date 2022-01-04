@@ -5,14 +5,14 @@
  */
 
 use crate::secret_service::proxy::secrets::Secret;
-use crate::secret_service::proxy::secrets_item::ItemProxy;
+use crate::secret_service::proxy::secrets_item::ItemProxyBlocking;
 use crate::secret_service::session::SERVICE_NAME;
 use anyhow::{anyhow, Result};
-use zbus::Connection;
+use zbus::blocking::Connection;
 use zvariant::OwnedObjectPath;
 
 pub struct Item<'a> {
-    proxy: ItemProxy<'a>,
+    proxy: ItemProxyBlocking<'a>,
     session_path: OwnedObjectPath,
 }
 
@@ -22,7 +22,10 @@ impl Item<'_> {
         session_path: OwnedObjectPath,
         path: String,
     ) -> Result<Item<'a>> {
-        let proxy = ItemProxy::new_for_owned(connection, SERVICE_NAME.to_string(), path)?;
+        let proxy = ItemProxyBlocking::builder(&connection)
+            .destination(SERVICE_NAME.to_string())?
+            .path(path)?
+            .build()?;
 
         Ok(Item {
             proxy,

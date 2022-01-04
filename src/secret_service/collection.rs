@@ -6,18 +6,18 @@
 
 use crate::secret_service::item::Item;
 use crate::secret_service::proxy::secrets::Secret;
-use crate::secret_service::proxy::secrets_collection::CollectionProxy;
+use crate::secret_service::proxy::secrets_collection::CollectionProxyBlocking;
 use crate::secret_service::session::SERVICE_NAME;
 use anyhow::Result;
 use std::collections::HashMap;
-use zbus::Connection;
+use zbus::blocking::Connection;
 use zvariant::{Dict, OwnedObjectPath, Value};
 
 pub const ITEM_LABEL: &str = "org.freedesktop.Secret.Item.Label";
 pub const ITEM_ATTRIBUTES: &str = "org.freedesktop.Secret.Item.Attributes";
 
 pub struct Collection<'a> {
-    proxy: CollectionProxy<'a>,
+    proxy: CollectionProxyBlocking<'a>,
     connection: Connection,
     session_path: OwnedObjectPath,
     aes_key: Vec<u8>,
@@ -30,8 +30,10 @@ impl Collection<'_> {
         aes_key: Vec<u8>,
         path: String,
     ) -> Result<Collection<'a>> {
-        let proxy =
-            CollectionProxy::new_for_owned(connection.clone(), SERVICE_NAME.to_string(), path)?;
+        let proxy = CollectionProxyBlocking::builder(&connection)
+            .destination(SERVICE_NAME.to_string())?
+            .path(path)?
+            .build()?;
 
         Ok(Collection {
             proxy,
