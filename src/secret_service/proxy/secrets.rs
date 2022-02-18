@@ -4,10 +4,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
+use aes::cipher::block_padding::Pkcs7;
+use aes::cipher::{BlockDecryptMut, BlockEncryptMut, KeyIvInit};
 use aes::Aes128;
 use anyhow::Result;
-use block_modes::block_padding::Pkcs7;
-use block_modes::{BlockMode, Cbc};
+use cbc::{Decryptor, Encryptor};
 use openssl::bn::BigNum;
 use openssl::rand::rand_bytes;
 use serde::{Deserialize, Serialize};
@@ -17,7 +18,8 @@ use zbus::dbus_proxy;
 use zvariant::{ObjectPath, OwnedObjectPath, OwnedValue, Value};
 use zvariant_derive::Type;
 
-type Aes = Cbc<Aes128, Pkcs7>;
+type Aes128CbcEnc = Encryptor<Aes128>;
+type Aes128CbcDec = Decryptor<Aes128>;
 
 /// https://specifications.freedesktop.org/secret-service/latest/re01.html
 #[dbus_proxy(
@@ -128,9 +130,9 @@ impl Secret {
         let value = value.as_mut_slice();
         let parameter = self.parameters.clone();
 
-        let cipher = Aes::new_from_slices(aes.as_slice(), parameter.as_slice())?;
-        let decrypted = cipher.decrypt_vec(value)?;
-        let secret = String::from_utf8(decrypted)?;
+        let decryptor = Aes128CbcDec::new_from_slices(aes.as_slice(), parameter.as_slice())?;
+        let result = decryptor.decrypt_padded_vec_mut::<Pkcs7>(value).unwrap();
+        let secret = String::from_utf8(result)?;
 
         Ok(secret)
     }
@@ -143,9 +145,9 @@ impl Secret {
         rand_bytes(aes_iv)?;
         let aes_iv = aes_iv.to_vec();
 
-        let cipher = Aes::new_from_slices(aes.as_slice(), aes_iv.as_slice())?;
-        let secret = cipher.encrypt_vec(value);
+        let encryptor = Aes128CbcEnc::new_from_slices(aes.as_slice(), aes_iv.as_slice())?;
+        let result = encryptor.encrypt_padded_vec_mut::<Pkcs7>(value);
 
-        Ok((secret, aes_iv))
+        Ok((result, aes_iv))
     }
 }
