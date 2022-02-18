@@ -44,8 +44,8 @@ impl<'a> WincredClient<'a> {
 
         // <https://docs.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw>
         let cred = CREDENTIALW {
-            Flags: CRED_FLAG_NONE,
-            Type: CRED_TYPE_GENERIC,
+            Flags: CRED_FLAGS(CRED_FLAG_NONE),
+            Type: CRED_TYPE(CRED_TYPE_GENERIC),
             TargetName: target,
             Comment: PWSTR(std::ptr::null_mut() as *mut u16),
             LastWritten: last_written,
