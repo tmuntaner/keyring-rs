@@ -7,6 +7,7 @@
 use anyhow::{anyhow, Result};
 use std::ffi::c_void;
 use widestring::{U16CString, U16String};
+use windows::core::{PCWSTR, PWSTR};
 use windows::Win32::{Foundation::*, Security::Credentials::*, System::SystemInformation::*};
 
 // <https://docs.microsoft.com/en-us/windows/win32/api/wincred/ns-wincred-credentialw#members>
@@ -85,7 +86,7 @@ impl<'a> WincredClient<'a> {
             // <https://docs.microsoft.com/en-us/windows/win32/api/wincred/nf-wincred-credreadw>
             // <https://microsoft.github.io/windows-docs-rs/doc/bindings/Windows/Win32/Security/Credentials/fn.CredReadW.html>
             CredReadW(
-                PWSTR(target_ptr as *mut u16),
+                PCWSTR(target_ptr as *mut u16),
                 CRED_TYPE_GENERIC,
                 CRED_FLAG_NONE,
                 credential_ptr,
