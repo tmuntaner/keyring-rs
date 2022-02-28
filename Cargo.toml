@@ -39,3 +39,4 @@ hkdf = "^0.12"
 aes = "0.8"
 sha2 = "^0.10"
 cbc = "0.1.1"
+cipher = {version = "0.4.3", features=["alloc"]}
