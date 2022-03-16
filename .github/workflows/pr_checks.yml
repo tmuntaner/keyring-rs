@@ -9,7 +9,7 @@ jobs:
     steps:
       - run: |
           sudo apt-get update -y
-          sudo apt-get install -y gnome-keyring
+          sudo apt-get install -y gnome-keyring dbus-x11
           echo $HOME
           mkdir -p /home/runner/.cache/
           mkdir -p /home/runner/.local/share/keyrings/
