@@ -15,7 +15,7 @@ documentation = "https://docs.rs/tmuntaner-keyring"
 anyhow = "1"
 
 [target.'cfg(target_os = "windows")'.dependencies]
-widestring = "0.5"
+widestring = "1.0"
 
 [target.'cfg(target_os = "windows")'.dependencies.windows]
 version = "^0.37"
