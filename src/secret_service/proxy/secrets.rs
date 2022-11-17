@@ -25,7 +25,8 @@ type Aes128CbcDec = Decryptor<Aes128>;
 #[dbus_proxy(
     interface = "org.freedesktop.Secret.Service",
     default_service = "org.freedesktop.secrets",
-    default_path = "/org/freedesktop/secrets"
+    default_path = "/org/freedesktop/secrets",
+    assume_defaults = true
 )]
 pub trait Secrets {
     fn open_session(&self, algorithm: &str, input: Value<'_>) -> zbus::Result<OpenSessionResult>;
