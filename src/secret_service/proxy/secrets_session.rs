@@ -7,7 +7,7 @@
 use zbus::dbus_proxy;
 
 /// https://specifications.freedesktop.org/secret-service/latest/re04.html
-#[dbus_proxy(interface = "org.freedesktop.Secret.Session")]
+#[dbus_proxy(interface = "org.freedesktop.Secret.Session", assume_defaults = true)]
 trait Session {
     fn close(&self) -> zbus::Result<()>;
 }

@@ -8,7 +8,7 @@ use zbus::dbus_proxy;
 use zvariant::Value;
 
 /// https://specifications.freedesktop.org/secret-service/latest/re05.html
-#[dbus_proxy(interface = "org.freedesktop.Secret.Prompt")]
+#[dbus_proxy(interface = "org.freedesktop.Secret.Prompt", assume_defaults = true)]
 trait Prompt {
     fn prompt(&self, window_id: &str) -> zbus::Result<()>;
 

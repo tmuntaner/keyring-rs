@@ -12,7 +12,10 @@ use zvariant::{ObjectPath, OwnedObjectPath, Value};
 use zvariant_derive::Type;
 
 /// https://specifications.freedesktop.org/secret-service/latest/re02.html
-#[dbus_proxy(interface = "org.freedesktop.Secret.Collection")]
+#[dbus_proxy(
+    interface = "org.freedesktop.Secret.Collection",
+    assume_defaults = true
+)]
 trait Collection {
     /// Returns prompt: ObjectPath
     fn delete(&self) -> zbus::Result<OwnedObjectPath>;
